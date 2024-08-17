@@ -1,0 +1,18 @@
+#version: "3.9"
+
+services:
+  api:
+    image: test-task-api:v0.1.0
+    build:
+      context: .
+      dockerfile: ./app/.docker/Dockerfile
+      target: production
+    environment:
+      MODEL_WEIGHTS_PATH: ${MODEL_WEIGHTS_PATH}
+      MODEL_METADATA_PATH: ${MODEL_METADATA_PATH}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./models:/home/models
+    entrypoint: uvicorn main:app --reload --host 0.0.0.0 --log-level debug
+    restart: unless-stopped
