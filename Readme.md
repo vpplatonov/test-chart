@@ -49,7 +49,7 @@ helmify -f kubernetes test-chart
 helm lint test-chart
 ```
 ### RUN
-#### cli (in browser http://localhost:8000/docs)
+#### from cli (in browser http://localhost:8000/docs)
 ```sh
 poetry install
 python main.py
@@ -69,3 +69,6 @@ helm install test-task ./test-chart-0.1.0.tgz
 kubectl get pods
 kubectl port-forward test-task-test-chart-api-<container-id> 8000:8000
 ```
+
+#### More ...
+    https://www.jetbrains.com/guide/python/tutorials/fastapi-aws-kubernetes/helm_charts/
