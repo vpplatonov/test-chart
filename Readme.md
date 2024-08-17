@@ -6,11 +6,11 @@ Docker, Docker compose, Kubernetes, Helm chart support.
 
 ##### As UI - FastAPI OpenAPI
 
-![OpenAPI UI](https://github.com/vpplatonov/test-chart/blob/main/docs/image_ui.png?raw=true)
+![OpenAPI UI](https://github.com/vpplatonov/test-chart/blob/develop/docs/assets/image_ui.png?raw=true)
 
 ###### after press execute
 
-![OpenAPI Res](https://github.com/vpplatonov/test-chart/blob/main/docs/image_response.png?raw=true)
+![OpenAPI Res](https://github.com/vpplatonov/test-chart/blob/develop/docs/assets/image_response.png?raw=true)
 
 ### Install Helm
 ```sh
