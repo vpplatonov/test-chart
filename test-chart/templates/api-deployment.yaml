@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "test-chart.fullname" . }}-api
+  labels:
+    io.kompose.service: api
+  {{- include "test-chart.labels" . | nindent 4 }}
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.34.0 (HEAD)
+spec:
+  replicas: {{ .Values.api.replicas }}
+  selector:
+    matchLabels:
+      io.kompose.service: api
+    {{- include "test-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        io.kompose.service: api
+      {{- include "test-chart.selectorLabels" . | nindent 8 }}
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.34.0 (HEAD)
+    spec:
+      containers:
+      - command:
+        - uvicorn
+        - main:app
+        - --reload
+        - --host
+        - 0.0.0.0
+        - --log-level
+        - debug
+        env:
+        - name: MODEL_METADATA_PATH
+          value: {{ quote .Values.api.api.env.modelMetadataPath }}
+        - name: MODEL_WEIGHTS_PATH
+          value: {{ quote .Values.api.api.env.modelWeightsPath }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.api.api.image.repository }}:{{ .Values.api.api.image.tag | default
+          .Chart.AppVersion }}
+        name: api
+        ports:
+        - containerPort: 8000
+          protocol: TCP
+        resources: {}
+        volumeMounts:
+        - mountPath: /home/models
+          name: api-cm0
+      restartPolicy: Always
+      volumes:
+      - configMap:
+          name: {{ include "test-chart.fullname" . }}-cm0
+        name: api-cm0
