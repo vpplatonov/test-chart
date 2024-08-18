@@ -1,27 +1,25 @@
-from pathlib import Path
-from functools import lru_cache
-from torch import load, autograd
 import json
+from functools import lru_cache
+from pathlib import Path
+
 from ai.scripts.config.settings import settings
 from ai.scripts.train import lineToTensor, RNN
+from torch import load, autograd
 
-all_categories = []
+all_categories = settings.all_categories
 
 
 @lru_cache
 def model_load(weights_file: Path = settings.model_weights_path):
     global all_categories
 
-    with open(settings.model_metadata_path, "r") as f:
-        rnn_params = json.load(f)
+    print(f"{settings.n_letters=}, {settings.n_hidden=}, {settings.n_categories=}, {all_categories=}")
 
-    n_letters = rnn_params["n_letters"]
-    n_hidden = rnn_params["n_hidden"]
-    n_categories = rnn_params["n_categories"]
-    all_categories = rnn_params["all_categories"]
-    # print(f"{n_letters=}, {n_hidden=}, {n_categories=}, {all_categories=}")
-
-    rnn = RNN(n_letters, n_hidden, n_categories)
+    rnn = RNN(
+        settings.n_letters,
+        settings.n_hidden,
+        settings.n_categories
+    )
     rnn.load_state_dict(load(weights_file))
     rnn.eval()
 
@@ -45,7 +43,7 @@ def evaluate(line_tensor, weights_file: Path):
 
 
 def predict(name, n_predictions: int, weights_file: Path):
-    # print(f"{n_letters=}, {n_hidden=}, {n_categories=}")
+
     output = evaluate(
         autograd.Variable(lineToTensor(name)),
         weights_file=weights_file

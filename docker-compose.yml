@@ -9,10 +9,11 @@ services:
       target: production
     environment:
       MODEL_WEIGHTS_PATH: ${MODEL_WEIGHTS_PATH}
-      MODEL_METADATA_PATH: ${MODEL_METADATA_PATH}
+#      MODEL_METADATA_PATH: ${MODEL_METADATA_PATH}
+      ENVIRONMENT: develop
     ports:
       - "8000:8000"
-    volumes:
-      - ./models:/home/models
+#    volumes:
+#      - ./models:/home/models
     entrypoint: uvicorn main:app --reload --host 0.0.0.0 --log-level debug
     restart: always

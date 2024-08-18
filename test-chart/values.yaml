@@ -1,7 +1,7 @@
 api:
   api:
     env:
-      modelMetadataPath: ../models/metadata.json
+      environment: develop
       modelWeightsPath: ../models/weights.pt
     image:
       repository: test-task-api
@@ -12,9 +12,4 @@ api:
     targetPort: 8000
   replicas: 1
   type: ClusterIP
-cm0:
-  metadataJson: '{"n_letters": 58, "n_hidden": 128, "n_categories": 18, "all_categories":
-    ["Czech", "German", "Arabic", "Japanese", "Chinese", "Vietnamese", "Russian",
-    "French", "Irish", "English", "Spanish", "Greek", "Italian", "Portuguese", "Scottish",
-    "Dutch", "Korean", "Polish"]}'
 kubernetesClusterDomain: cluster.local

@@ -69,6 +69,9 @@ helm install test-task ./test-chart-0.1.0.tgz
 kubectl get pods
 kubectl port-forward test-task-test-chart-api-<container-id> 8000:8000
 ```
-
+### Clean it all
+```shell
+helm uninstall test-task
+```
 #### More ...
     https://www.jetbrains.com/guide/python/tutorials/fastapi-aws-kubernetes/helm_charts/

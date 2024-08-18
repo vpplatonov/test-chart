@@ -33,8 +33,8 @@ spec:
         - --log-level
         - debug
         env:
-        - name: MODEL_METADATA_PATH
-          value: {{ quote .Values.api.api.env.modelMetadataPath }}
+        - name: ENVIRONMENT
+          value: {{ quote .Values.api.api.env.environment }}
         - name: MODEL_WEIGHTS_PATH
           value: {{ quote .Values.api.api.env.modelWeightsPath }}
         - name: KUBERNETES_CLUSTER_DOMAIN
@@ -46,11 +46,4 @@ spec:
         - containerPort: 8000
           protocol: TCP
         resources: {}
-        volumeMounts:
-        - mountPath: /home/models
-          name: api-cm0
       restartPolicy: Always
-      volumes:
-      - configMap:
-          name: {{ include "test-chart.fullname" . }}-cm0
-        name: api-cm0

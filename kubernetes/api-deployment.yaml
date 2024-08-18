@@ -12,8 +12,6 @@ spec:
   selector:
     matchLabels:
       io.kompose.service: api
-  strategy:
-    type: Recreate
   template:
     metadata:
       annotations:
@@ -32,8 +30,8 @@ spec:
             - --log-level
             - debug
           env:
-            - name: MODEL_METADATA_PATH
-              value: ../models/metadata.json
+            - name: ENVIRONMENT
+              value: develop
             - name: MODEL_WEIGHTS_PATH
               value: ../models/weights.pt
           image: test-task-api:v0.1.0
@@ -41,11 +39,4 @@ spec:
           ports:
             - containerPort: 8000
               protocol: TCP
-          volumeMounts:
-            - mountPath: /home/models
-              name: api-cm0
       restartPolicy: Always
-      volumes:
-        - configMap:
-            name: api-cm0
-          name: api-cm0

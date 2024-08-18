@@ -101,6 +101,9 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
 COPY --from=builder-base $POETRY_HOME $POETRY_HOME
 COPY --from=builder-base $VIRTUAL_ENV $VIRTUAL_ENV
 
+WORKDIR /home/
+COPY models/ models/
+
 WORKDIR /home/app/
 COPY poetry.lock pyproject.toml ./
 COPY app/ ./
