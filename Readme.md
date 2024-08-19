@@ -74,4 +74,5 @@ kubectl port-forward test-task-test-chart-api-<container-id> 8000:8000
 helm uninstall test-task
 ```
 #### More ...
+    https://testdriven.io/blog/running-flask-on-kubernetes/
     https://www.jetbrains.com/guide/python/tutorials/fastapi-aws-kubernetes/helm_charts/

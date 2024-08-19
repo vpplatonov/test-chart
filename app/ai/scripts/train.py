@@ -1,18 +1,16 @@
 """Adapted from https://pytorch.org/tutorials/intermediate/char_rnn_classification_tutorial.html"""
-import json
 import glob
+import json
 import random
-import string
 import time
 from pathlib import Path
 
 import math
-import torch
-import torch.nn as nn
 import unicodedata
-from torch.autograd import Variable
+from config.settings import settings
+from torch import nn, LongTensor, optim, save, autograd
 
-from ai.scripts.config.settings import settings
+from __meta__ import all_letters, n_letters, lineToTensor, RNN
 
 n_hidden = 128
 n_epochs = 100000
@@ -22,35 +20,9 @@ learning_rate = (
     0.005  # If you set this too high, it might explode. If too low, it might not learn
 )
 
-all_letters = string.ascii_letters + " .,;'-"
-n_letters = len(all_letters)
-
 category_lines = {}
-all_categories = []
 n_categories = -1
-
-
-class RNN(nn.Module):
-    def __init__(self, input_size: int, hidden_size: int, output_size: int):
-        super(RNN, self).__init__()
-
-        self.hidden_size = hidden_size
-
-        self.i2h = nn.Linear(input_size + hidden_size, hidden_size)
-        self.i2o = nn.Linear(input_size + hidden_size, output_size)
-        # Implicit dimension choice for log_softmax has been deprecated.
-        # Change the call to include dim=X as an argument.
-        self.softmax = nn.LogSoftmax(dim=1)
-
-    def forward(self, input, hidden):
-        combined = torch.cat((input, hidden), 1)
-        hidden = self.i2h(combined)
-        output = self.i2o(combined)
-        output = self.softmax(output)
-        return output, hidden
-
-    def initHidden(self):
-        return Variable(torch.zeros(1, self.hidden_size))
+all_categories = []
 
 
 def findFiles(path):
@@ -72,20 +44,6 @@ def readLines(filename):
     return [unicodeToAscii(line) for line in lines]
 
 
-# Find letter index from all_letters, e.g. "a" = 0
-def letterToIndex(letter):
-    return all_letters.find(letter)
-
-
-# Turn a line into a <line_length x 1 x n_letters>,
-# or an array of one-hot letter vectors
-def lineToTensor(line):
-    tensor = torch.zeros(len(line), 1, n_letters)
-    for li, letter in enumerate(line):
-        tensor[li][0][letterToIndex(letter)] = 1
-    return tensor
-
-
 def categoryFromOutput(output):
     top_n, top_i = output.data.topk(1)  # Tensor out of Variable with .data
     category_i = top_i[0][0]
@@ -99,8 +57,8 @@ def randomChoice(l):
 def randomTrainingPair():
     category = randomChoice(all_categories)
     line = randomChoice(category_lines[category])
-    category_tensor = Variable(torch.LongTensor([all_categories.index(category)]))
-    line_tensor = Variable(lineToTensor(line))
+    category_tensor = autograd.Variable(LongTensor([all_categories.index(category)]))
+    line_tensor = autograd.Variable(lineToTensor(line))
 
     return category, line, category_tensor, line_tensor
 
@@ -135,6 +93,7 @@ if __name__ == "__main__":
     # Keep track of losses for plotting
     current_loss = 0
     all_losses = []
+    all_categories = []
 
     # Build the category_lines dictionary, a list of lines per category
     # global category_lines, all_categories, n_categories
@@ -157,7 +116,7 @@ if __name__ == "__main__":
         ), f)
 
     rnn = RNN(input_size=n_letters, hidden_size=n_hidden, output_size=n_categories)
-    optimizer = torch.optim.SGD(rnn.parameters(), lr=learning_rate)
+    optimizer = optim.SGD(rnn.parameters(), lr=learning_rate)
     criterion = nn.NLLLoss()
 
 
@@ -198,4 +157,4 @@ if __name__ == "__main__":
             all_losses.append(current_loss / plot_every)
             current_loss = 0
 
-    torch.save(rnn.state_dict(), args.o)
+    save(rnn.state_dict(), args.o)

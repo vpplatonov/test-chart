@@ -1,9 +1,8 @@
-import json
 from functools import lru_cache
 from pathlib import Path
 
+from ai.scripts.__meta__ import lineToTensor, RNN
 from ai.scripts.config.settings import settings
-from ai.scripts.train import lineToTensor, RNN
 from torch import load, autograd
 
 all_categories = settings.all_categories

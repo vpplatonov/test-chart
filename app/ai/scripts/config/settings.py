@@ -22,9 +22,12 @@ class Settings(BaseSettings):
 
         # for local testing (cli & Docker)
         if self.environment == 'develop':
-            with open(self.model_metadata_path, "r") as f:
-                rnn_params = json.load(f)
-                self.__dict__.update(rnn_params)
+            try:
+                with open(self.model_metadata_path, "r") as f:
+                    rnn_params = json.load(f)
+                    self.__dict__.update(rnn_params)
+            except FileNotFoundError as e:
+                print("model have not been trained yet")
 
         if self.environment == 'prod':
             # For Kubernetes deployment
